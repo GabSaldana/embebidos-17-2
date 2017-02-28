@@ -1,34 +1,27 @@
-#Archivo Makefile simple
+PROYECTO=muestreo
+DESTDIR=/usr/local/bin
+CFLAGS=-Wall
+LDFLAGS=-lm
+CC=gcc
 
-#PROYECTO=muestreo
-#DESTDIR=usr/local/bin
-#CFLAGS= -Wall
-#LDFLAGS= -lm
-#CC=gcc
+all: $(PROYECTO)
 
-all: muestreo
+%.o: %.c
+	$(CC) -c $< $(CFLAGS)
 
-muestreo.o: muestreo.c
-	gcc -c muestreo.c -Wall
-
-procesamiento.o: procesamiento.c
-	gcc -c procesamiento.c -Wall
-
-archivos.o: archivos.c
-	gcc -c archivos.c -Wall
-
-muestreo: muestreo.o procesamiento.o archivos.o
-	gcc muestreo.o procesamiento.o archivos.o -o muestreo -lm
+$(PROYECTO): $(patsubst %.c, %.o, $(wildcard *.c))
+	$(CC) $^ -o $@ $(LDFLAGS)
 
 .PHONY: clean
 
 install: all
-	if [ ! -d /usr/local/bin ]; then \
-		sudo mkdir /usr/local/bin; \
+	if[! -d $(DESTDIR) ]; then \
+		sudo mkdir $(DESTDIR); \
 	fi; \
-	sudo cp muestreo /usr/local/bin
+	sudo cp $(PROYECTO) $(DESTDIR)
+
 uninstall:
-	sudo rm /usr/local/bin/muestreo
+	sudo rm $(DESTDIR)/$(PROYECTO)
 
 clean:
-	rm -f *.o muestreo
+	rm -f *.o $(PROYECTO)
